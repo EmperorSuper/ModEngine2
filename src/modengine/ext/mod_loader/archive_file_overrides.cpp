@@ -52,7 +52,11 @@ Hook<fpCreateFileW> hooked_CreateFileW;
 Hook<decltype(&virtual_to_archive_path_ds3)> hooked_virtual_to_archive_path_ds3;
 Hook<decltype(&virtual_to_archive_path_ds2)> hooked_virtual_to_archive_path_ds2;
 Hook<decltype(&virtual_to_archive_path_sekiro)> hooked_virtual_to_archive_path_sekiro;
+#if !ELDEN_LOADER_MODE
 ScannedHook<decltype(&virtual_to_archive_path_eldenring)> hooked_virtual_to_archive_path_eldenring;
+#else
+Hook<decltype(&virtual_to_archive_path_eldenring)> hooked_virtual_to_archive_path_eldenring;
+#endif
 concurrency::concurrent_vector<std::wstring> hooked_file_roots;
 
 using namespace spdlog;

@@ -16,6 +16,10 @@ auto loose_params_aob_3 = util::hex_string("E8 78 08 F8 FF 90 E9 0E E9 08 05 53 
 
 auto virtual_to_archive_path_er_aob = util::hex_aob("e8 ?? ?? ?? ?? 48 83 7b 20 08 48 8d 4b 08 72 03 48 8b 09 4c 8b 4b 18 41 b8 05 00 00 00 4d 3b c8");
 
+// TODO: fix the memory scanner to work on linux
+//       I want to play the randomizer for now a hardcoded value for 1.0.5
+#include "modengine/version.h"
+
 static fs::path primary_mod_path(const Settings& settings)
 {
     return settings.modengine_local_path();
@@ -55,7 +59,12 @@ void ModLoaderExtension::on_attach()
     // TODO: AOB scan this?
     register_hook(ALL, &hooked_CreateFileW, "C:\\windows\\system32\\kernel32.dll", "CreateFileW", tCreateFileW);
     register_hook(DS3, &hooked_virtual_to_archive_path_ds3, 0x14007d5e0, virtual_to_archive_path_ds3);
+
+#if !ELDEN_LOADER_MODE
     register_hook(ELDEN_RING, &hooked_virtual_to_archive_path_eldenring, virtual_to_archive_path_er_aob, virtual_to_archive_path_eldenring, SCAN_CALL_INST);
+#else
+    register_hook(ELDEN_RING, &hooked_virtual_to_archive_path_eldenring, 0x1403ced86, virtual_to_archive_path_eldenring);
+#endif
 
     auto config = get_config<ModLoaderConfig>();
     for (const auto& mod : config.mods) {
