@@ -6,8 +6,6 @@
 #include <set>
 #include <concurrent_vector.h>
 
-#include "modengine/version.h"
-
 namespace modengine::ext {
 
 // String type used in DS2/DS3
@@ -37,11 +35,7 @@ extern Hook<fpCreateFileW> hooked_CreateFileW;
 extern Hook<decltype(&virtual_to_archive_path_ds3)> hooked_virtual_to_archive_path_ds3;
 extern Hook<decltype(&virtual_to_archive_path_ds2)> hooked_virtual_to_archive_path_ds2;
 extern Hook<decltype(&virtual_to_archive_path_sekiro)> hooked_virtual_to_archive_path_sekiro;
-#if !ELDEN_LOADER_MODE
 extern ScannedHook<decltype(&virtual_to_archive_path_eldenring)> hooked_virtual_to_archive_path_eldenring;
-#else
-extern Hook<decltype(&virtual_to_archive_path_eldenring)> hooked_virtual_to_archive_path_eldenring;
-#endif
 extern concurrency::concurrent_vector<std::wstring> hooked_file_roots;
 
 
