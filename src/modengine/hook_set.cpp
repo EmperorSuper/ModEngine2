@@ -50,7 +50,7 @@ bool HookSet::hook_all()
         }
         auto addr = scanner.find(hook->pattern);
         if (!addr) {
-            error("Could not find pattern");
+            error("Could not find pattern {}", hook->pattern.pattern.to_string());
             continue;
         }
         debug("Found address at 0x{0:08x}", *addr);
