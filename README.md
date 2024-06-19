@@ -107,3 +107,123 @@ Instead, you can use your favourite debugger (WinDbg, x64dbg, or even Cheat Engi
 ### Lua scripting
 
 **WIP**
+
+
+
+
+
+
+
+
+
+
+ModEngine2 DLL that works with Elden Mod Loader
+
+https://github.com/techiew/EldenRingModLoader
+Also AC6: https://modslab.net/en/armored_core_vi_fires_of_rubicon/mods/ReAaefZ9fY/
+How to use?
+
+Get Elden Mod Loader from https://www.nexusmods.com/eldenring/mods/117 and follow the install instructions.
+Grab this ModLoader2 release, and put the modengine2/bin/lua.dll and modengine2/bin/modengine2.dll files into the ELDEN RING/Game/mods directory.
+
+Set your elden ring launch option in steam like follows:
+echo "%command%" | sed 's/start_protected_game/eldenring/' | WINEDLLOVERRIDES="dinput8.dll=n,b" sh
+This skips the anti-cheat and tells wine to load the native version of dinput8.dll (Elden Mod Loader)
+
+The modified modengine2 by default looks for config file in ELDEN RING/Game/modengine.toml, you can change this with MODENGINE_CONFIG environment variable if needed.
+
+For AC6 see this issue: #19
+How to use with seamless co-op
+
+Copy the SeamlessCoop/elden_ring_seamless_coop.dll to the mods directory.
+How to use with enemy / item randomizer?
+
+Unpack the randomizer mod to game folder, you should have a subfolder called randomizer.
+Run the randomizer exe in that subfolder and do your randomization.
+
+Use the following modengine.toml config:
+
+# Global mod engine configuration
+[modengine]
+# If set to true the debug console will appear while the game is running
+debug = false
+
+# Mod loader configuration
+[extension.mod_loader]
+enabled = true
+
+# Not currently supported for Elden Ring
+loose_params = false
+
+# List of directories that contain modded files in order of prioritization. Inside each specified mod directory must have the game
+# assets in Fromsoft's asset structure. I.e. if you mod parts/something.partsbnd.dcx, the modded version must be at mod/parts/something.partsbnd.dcx.
+# Absolute paths to mods are supported but must use '\\' to separate path items. For example, if your mod is at E:\coolstuff\coolmod, you must enter
+# the path in the config as "E:\\coolstuff\\coolmod".
+# If there's no drive specifier (C:, D:, etc), the path is relative to where the launcher is located. For example, having the path as "mod" will tell
+# modengine 2 to look for the directory mod inside the mod engine 2 directory with the launcher.
+#
+# Multiple mods must be separated with commas. For example if you have 3 mods, you will have something like the following:
+# mods = [
+#    { enabled = true, name = "coolmod", path = "mod1" },
+#    { enabled = true, name = "nicemod", path = "mod2" },
+#    { enabled = true, name = "sosomod", path = "mod3" }
+# ]
+# Note that modengine 2 currently has no way to resolve conflicting files including regulation.bin, and thus the mod with the highest priority
+# will have the modded file be loaded in the case of conflict. Some support for merging of params and potentially other assets is considered for
+# a future release.
+mods = [
+    { enabled = true, name = "default", path = "randomizer" }
+]
+
+# When enabled, scylly hide will be injected into the game. This allows for antidebug measures in the game to be bypassed so that you can attach
+# debuggers such as Cheat Engine, x64dbg, windbg, etc to the game without as much trouble. If you're not reverse engineering the game, this option
+# is probably not for you.
+[extension.scylla_hide]
+enabled = false
+
+Can you use this with both co-op and enemy randomizer?
+
+Yes
+
+Example file tree of such setup:
+
+ELDEN RING
+└── Game
+    ├── mods
+    │   ├── lua.dll
+    │   ├── modengine2.dll
+    │   ├── elden_ring_seamless_coop.dll
+    │   └── seamlesscoopsettings.ini
+    ├── movie
+    ├── randomizer
+    │   ├── diste
+    │   ├── event
+    │   ├── map
+    │   ├── msg
+    │   ├── script
+    │   ├── sfx
+    │   ├── spoiler_logs
+    │   ├── 12784.randomizeopt
+    │   ├── EldenRingRandomizer.exe
+    │   ├── README.txt
+    │   ├── config_eldenringrandomizer.toml
+    │   ├── locations.txt
+    │   ├── oo2core_6_win64.dll
+    │   └── regulation.bin
+    ├── sd
+    ├── amd_ags_x64.dll
+    ├── bink2w64.dll
+    ├── dinput8.dll
+    ├── eldenring.exe
+    ├── eossdk-win64-shipping.dll
+    ├── eossdk-win64-shipping.so
+    ├── mod_loader_config.ini
+    ├── modengine.toml
+    ├── oo2core_6_win64.dll
+    ├── regulation.bin
+    ├── start_protected_game.exe
+    └── steam_api64.dll
+
+The mods do not load, or load sometimes
+
+Try changing the load_delay in mod_loader_config.ini, some people report success with value such as 2500
